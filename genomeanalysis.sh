@@ -116,7 +116,7 @@ fi
 # Check if only FASTQ files are provided in the fastqfolder
 for seqfile in ${fastqfolder}/*; do
   # Get the extension of the file, if file is compressed
-  if file --mime-type ${seqfile} | grep -q gzip; then
+  if file --mime-type "${seqfile}" | grep -q gzip; then
     filename=${seqfile%.*}
     extension=${filename##*.}
   else # Get the extension of the file, if file is NOT compressed
