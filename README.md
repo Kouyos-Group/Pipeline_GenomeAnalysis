@@ -47,6 +47,7 @@ Usage: genomeanalysis.sh    [-h or --help]
                             [-f or --fastqfolder]
                             [-o or --outname]
                             [-t or --threads]
+                            [-r or --referencefolder]
 
 Optional arguments:
     -h, --help:
@@ -59,6 +60,9 @@ Optional arguments:
                 Number of threads that will be used.
                 It must be an integer.
                 Default: 8.
+    -r, --referencefolder:
+                Path to the folder that contains an external REFERENCE genome.
+                The following files are needed: FASTA, GFF, GenBank.
 Required arguments:
     -f, --fastqfolder:
                 Path to the folder that contains ALL your FASTQ files.
