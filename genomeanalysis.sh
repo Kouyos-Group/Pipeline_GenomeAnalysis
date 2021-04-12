@@ -13,6 +13,7 @@ Usage: genomeanalysis.sh    [-h or --help]
                             [-f or --fastqfolder]
                             [-o or --outname]
                             [-t or --threads]
+                            [-r or --referencefolder]
 """
 }
 # Describe usage of the tool and provide help
@@ -30,6 +31,9 @@ Optional arguments:
                 Number of threads that will be used.
                 It must be an integer.
                 Default: 8.
+    -r, --referencefolder:
+                Path to the folder that contains an external REFERENCE genome.
+                The following files are needed: FASTA, GFF, GenBank.
 Required arguments:
     -f, --fastqfolder:
                 Path to the folder that contains ALL your FASTQ files.
@@ -43,6 +47,7 @@ for ARGS in "$@"; do
   shift
         case "$ARGS" in
                 "--fastqfolder") set -- "$@" "-f" ;;
+                "--referencefolder") set -- "$@" "-r" ;;
                 "--outname") set -- "$@" "-o" ;;
                 "--threads") set -- "$@" "-t" ;;
                 "--help") set -- "$@" "-h" ;;
@@ -51,12 +56,13 @@ for ARGS in "$@"; do
 done
 
 # Define defaults
-outn="mygenomes"; threads=8
+outn="mygenomes"; threads=8; referencefolder=""
 
 # Define all parameters
 while getopts 'f:o::t::h' flag; do
         case "${flag}" in
                 f) fastqfolder=${OPTARG} ;;
+                r) referencefolder=${OPTARG} ;;
                 o) outn=${OPTARG} ;;
                 t) threads=${OPTARG} ;;
                 h) print_help
@@ -106,7 +112,7 @@ echo "Required software is properly installed."
 ########################################
 
 printf "\nChecking if required inputs are correct...\n"
-# Check if directory containing FASTQ files exist
+# Check if directory containing FASTQ files exists
 if [ ! -d ${fastqfolder} ]; then
   echo "Error: --fastqfolder doesn't exist."
   echo "Solution: check if the path to this directory is correct."
@@ -134,10 +140,19 @@ done
 end=$(ls -1q ${fastqfolder} | wc -l)
 # If there are less than 4 FASTQ (less than 2 strains), show the error
 if [ ${end} -lt 4 ]; then
-  echo "Error: --fastqfolder should contain at least 4 FASTQ files."
-  echo "Reason: comparisons only possible if you have >2 strains."
-  echo "Solution: add FASTQ files to the folder."
-  exit 1
+  if [ "${referencefolder}" == "" ]; then
+    echo "Error: --fastqfolder should contain at least 4 FASTQ files."
+    echo "Reason: comparisons only possible if you have >2 strains."
+    echo "Solution: add FASTQ files to the folder OR add a REFERENCE folder."
+    exit 1
+  else # If reference strain is provided, then only 1 extra strain is needed
+    if [ ${end} -lt 2 ]; then
+      echo "Error: --fastqfolder should contain at least 2 FASTQ files."
+      echo "Reason: comparisons only possible if you have >2 strains."
+      echo "Solution: add FASTQ files to the folder to compare with your ref."
+      exit 1
+    fi
+  fi
 fi
 echo "Required inputs seem correct."
 
@@ -147,6 +162,29 @@ echo "Required inputs seem correct."
 ########################################
 
 printf "\nChecking if optional inputs are correct...\n"
+# Check if directory containing the REFERENCE files exists
+if [ "${referencefolder}" != "" ]; then
+  if [ ! -d ${referencefolder} ]; then
+    echo "Error: --referencefolder doesn't exist."
+    echo "Solution: check if the path to this directory is correct."
+    exit 1
+  fi
+  # Make sure that reference folder contains the proper files
+  for reffile in ${referencefolder}/*; do
+    # Get the extension of the file
+    extension=${reffile##*.}
+    # Check if extension is fasta, gff or
+    extension=$(tr "[:upper:]" "[:lower:]" <<< ${extension})
+    if [[ ${extension} != "fasta" && ${extension} != "fa" && \
+          ${extension} != "gff" && ${extension} != "gff3" && \
+          ${extension} != "gbk" && ${extension} != "gb" ]]; then
+      echo "Error: --referencefolder should contain FASTA, GFF and GBK files."
+      echo "Solution: remove any other file from this directory."
+      exit 1
+    fi
+  done
+fi
+
 # Check if the number of threads is an integer
 if ! [[ ${threads} =~ ^[0-9]+$ ]]; then
   echo "Error: --threads is not an integer."
@@ -213,6 +251,10 @@ for i in $(seq 2  2 ${end}); do
   # Copy the annotation results to the temporal folder
   cp ${outn}_${i}/annotation/prokka.gff tmp_genome/${fname}.gff
 done
+# If there is a reference genome, copy it into the temporal folder too
+if [ "${referencefolder}" != "" ]; then
+  cat ${referencefolder}/*.gff* ${referencefolder}/*.fa* > tmp_genome/refg.gff
+fi
 
 
 ############################
@@ -237,7 +279,11 @@ rm -r tmp_genome
 
 printf "\nPerforming variant calling analysis...\n"
 # Use as a reference genome the first strain that is provided
-reference_genome="${outn}_2/annotation/prokka.ffn"
+if [ "${referencefolder}" != "" ]; then
+  reference_genome="${referencefolder}/*.gb*"
+else
+  reference_genome="${outn}_2/annotation/prokka.ffn"
+fi
 
 # Compute variant calling with Snippy and identify SNPs
 for i in $(seq 4  2 ${end}); do
