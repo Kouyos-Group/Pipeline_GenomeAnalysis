@@ -169,6 +169,15 @@ if [ "${referencefolder}" != "" ]; then
     echo "Solution: check if the path to this directory is correct."
     exit 1
   fi
+  # Count number of files that are found in the folder
+  numbrefs=$(ls -1q ${referencefolder} | wc -l)
+  # If there are less than 3 files, show the error
+  if [ ${numbrefs} -ne 3 ]; then
+    echo "Error: --referencefolder should contain exactly 3 files."
+    echo "Reason: FASTA, GFF and GenBank files needed."
+    echo "Solution: add missing files to the reference folder."
+    exit 1
+  fi
   # Make sure that reference folder contains the proper files
   for reffile in ${referencefolder}/*; do
     # Get the extension of the file
