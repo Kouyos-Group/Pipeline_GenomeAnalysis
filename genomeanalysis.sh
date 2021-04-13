@@ -281,12 +281,14 @@ printf "\nPerforming variant calling analysis...\n"
 # Use as a reference genome the first strain that is provided
 if [ "${referencefolder}" != "" ]; then
   reference_genome="${referencefolder}/*.gb*"
+  minvalstart=2
 else
   reference_genome="${outn}_2/annotation/prokka.ffn"
+  minvalstart=4
 fi
 
 # Compute variant calling with Snippy and identify SNPs
-for i in $(seq 4  2 ${end}); do
+for i in $(seq ${minvalstart} 2 ${end}); do
   snippy --report --cpus ${threads} \
   --outdir ${outn}_SNPs_${i} --ref ${reference_genome} \
   --ctgs ${outn}_${i}/assembly/contigs.fasta
