@@ -175,7 +175,7 @@ if [ "${referencefolder}" != "" ]; then
   if [ ${numbrefs} -ne 3 ]; then
     echo "Error: --referencefolder should contain exactly 3 files."
     echo "Reason: FASTA, GFF and GenBank files needed."
-    echo "Solution: add missing files to the reference folder."
+    echo "Solution: add/remove files in the reference folder."
     exit 1
   fi
   # Make sure that reference folder contains the proper files
