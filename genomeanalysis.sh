@@ -326,8 +326,12 @@ for i in $(seq 2  2 ${end}); do
   fi
   # Move the folder to a new name matching the files names
   mv ${outn}_${i} ${outn}_${fname}
-  if [ ${i} -gt 2 ]; then
+  if [ "${referencefolder}" != "" ]; then
     mv ${outn}_SNPs_${i} ${outn}_SNPs_${fname}
+  else
+    if [ ${i} -gt 2 ]; then
+      mv ${outn}_SNPs_${i} ${outn}_SNPs_${fname}
+    fi
   fi
 done
 
