@@ -304,8 +304,14 @@ for i in $(seq ${minvalstart} 2 ${end}); do
 done
 
 # If there are more than 2 strains to compare, identify core SNPs.
-if [ ${end} -gt 4 ]; then
-  snippy-core --ref ${reference_genome} --prefix ${outn}_SNPsCore ${outn}_SNPs_*
+if [ "${referencefolder}" != "" ]; then
+  if [ ${end} -gt 2 ]; then
+    snippy-core --ref ${reference_genome} --prefix ${outn}_SNPsCore ${outn}_SNPs_*
+  fi
+else
+  if [ ${end} -gt 4 ]; then
+    snippy-core --ref ${reference_genome} --prefix ${outn}_SNPsCore ${outn}_SNPs_*
+  fi
 fi
 echo "SNPs were detected sucessfully."
 
