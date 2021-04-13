@@ -59,7 +59,7 @@ done
 outn="mygenomes"; threads=8; referencefolder=""
 
 # Define all parameters
-while getopts 'f:o::t::h' flag; do
+while getopts 'f:r::o::t::h' flag; do
         case "${flag}" in
                 f) fastqfolder=${OPTARG} ;;
                 r) referencefolder=${OPTARG} ;;
