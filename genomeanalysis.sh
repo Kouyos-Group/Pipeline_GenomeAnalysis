@@ -104,6 +104,12 @@ if ! [ -x "$(command -v snippy)" ]; then
   echo "https://github.com/tseemann/snippy"
   exit 127
 fi
+if ! [ -x "$(command -v spaTyper)" ]; then
+  echo "Missing: SpaTyper not found"
+  echo "Information on the installation:"
+  echo "https://github.com/HCGB-IGTP/spaTyper"
+  exit 127
+fi
 echo "Required software is properly installed."
 
 
@@ -236,6 +242,19 @@ for i in $(seq 2  2 ${end}); do
     ${outn}_${i}/assembly/contigs.fasta
 done
 echo "Gene annotations finished sucessfully."
+
+
+##################################
+## Compute Spa Type calculation ##
+##################################
+
+printf "\nCalculating spa type of all your sequences...\n"
+for i in $(seq 2  2 ${end}); do
+  # Compute spa type
+  spaTyper -f ${outn}_${i}/assembly/contigs.fasta \
+    --output ${outn}_${i}/spatype.txt
+done
+echo "Spa typing finished sucessfully."
 
 
 #####################################

@@ -5,7 +5,7 @@ by Judith Bergadà Pijuan
 This pipeline is aimed to perform the assembly and annotation of paired-end
 sequencing reads, as well as to compare the genome content of the given
 DNA sequences. In addition, it performs a variant calling analysis in order to
-detect the SNPs across sequences.
+detect the SNPs across sequences, and it also determines the spa type.
 Given multiple paired-end sequencing reads (FASTQ files),
 it provides a table file showing the genome content comparison, and (multiple)
 tables showing the SNPs detected across strains.
@@ -20,6 +20,7 @@ To use this pipeline, you need to install the following dependencies:
 - Prokka
 - Roary
 - Snippy
+- SpaTyper
 
 Later, you need to download the tool:
 ```bash
@@ -30,9 +31,9 @@ git clone https://github.com/judithbergada/Pipeline_GenomeAnalysis
 ## Usage
 
 The pipeline expects you to have the following folder:
-- FASTQ folder: this is a folder containing only your sequencing reads (FASTQ files).
-You must have all your FASTQ files here, and it is important that the pairs of files have the
-same prefix in the name.
+- FASTQ folder: this is a folder containing only your sequencing reads
+(FASTQ files). You must have all your FASTQ files here, and it is important
+that the pairs of files have the same prefix in the name.
 
 To get information about the usage, please try:
 
