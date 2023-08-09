@@ -83,6 +83,9 @@ provides the whole amino acid sequences of these genes. It can be useful,
 for example, to compare the amino acid sequences using external tools such as
 Clustal-Omega.
 
+Important: all outputs will be saved in the same folder as the outputs from the
+Genome Analysis pipeline, specifically into the subfolder named allSNPs.
+
 ## Installation
 
 To use this command, you don't need to install any dependencies.
@@ -133,7 +136,7 @@ Required arguments:
     -s, --specific_genes:
                 Names of the genes that you want to compare.
                 Write all of them within quotes and separated with a space.
-                E.g.: 'murF' 'fabZ' 'rplL'.
+                E.g.: 'murF fabZ rplL'.
     -o, --outputs_folder:
                 Path to the folder that contains ALL your outputs from
                 the genomeanalysis.sh pipeline.

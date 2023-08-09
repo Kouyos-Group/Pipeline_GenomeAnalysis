@@ -30,7 +30,7 @@ Required arguments:
     -s, --specific_genes:
                 Names of the genes that you want to compare.
                 Write all of them within quotes and separated with a space.
-                E.g.: 'murF' 'fabZ' 'rplL'.
+                E.g.: 'murF fabZ rplL'.
     -o, --outputs_folder:
                 Path to the folder that contains ALL your outputs from
                 the genomeanalysis.sh pipeline.
@@ -106,11 +106,13 @@ echo "Optional inputs seem correct."
 ##################################################################
 
 printf "\nIdentifying gene sequences...\n"
+pathout=$(realpath ${outputs_folder}/*allSNPs*/)
 for genename in ${specific_genes}; do
   # Remove results if existing and create new ones with all permissions
-  rm -f SNPs_AA_${genename}.txt && \
-    touch SNPs_AA_${genename}.txt && \
-    chmod +xwr SNPs_AA_${genename}.txt
+  rm -f ${pathout}/SNPs_AA_${genename}.txt && \
+    touch ${pathout}/SNPs_AA_${genename}.txt && \
+    chmod +xwr ${pathout}/SNPs_AA_${genename}.txt
+  echo "hello"
   for strain_name in ${outputs_folder}/*; do
     # Reject folders containing GenomeContent or SNPs information
     if ! [[ ${strain_name} =~ .*GenomeContent.*|.*allSNPs.* ]]; then
@@ -122,8 +124,8 @@ for genename in ${specific_genes}; do
       geneseq=$(cat ${strain_name}/annotation/prokka.faa | \
         grep -A100000 ${genename} | tail -n +2 | \
         grep -m1 -B100000 ">" | sed '$d')
-      echo ">"${sname}_${genename} >> SNPs_AA_${genename}.txt
-      echo ${geneseq} >> SNPs_AA_${genename}.txt
+      echo ">"${sname}_${genename} >> ${pathout}/SNPs_AA_${genename}.txt
+      echo ${geneseq} >> ${pathout}/SNPs_AA_${genename}.txt
     fi
   done
 done
@@ -145,12 +147,13 @@ allgenes=$(cat ${outputs_folder}/*_allSNPs/*_SNPsCore.tab | \
   cut -f 1 | tail -n +2)
 
 # Create file of outputs
-rm -f SNPs_AA_allgenes.txt && \
-  touch SNPs_AA_allgenes.txt && \
-  chmod +xwr SNPs_AA_allgenes.txt
+rm -f ${pathout}/SNPs_AA_allgenes.txt && \
+  touch ${pathout}/SNPs_AA_allgenes.txt && \
+  chmod +xwr ${pathout}/SNPs_AA_allgenes.txt
 
 # Write 1st line of output
-cat ${outputs_folder}/*_allSNPs/*_SNPsCore.tab | head -n1 > SNPs_AA_allgenes.txt
+cat ${outputs_folder}/*_allSNPs/*_SNPsCore.tab | head -n1 > \
+  ${pathout}/SNPs_AA_allgenes.txt
 
 i=1
 # Write the amino acid of each position that has been found for each strain
@@ -177,7 +180,7 @@ for j in ${positions_aa}; do
   done
   i=$((i+1))
   printf "\n";
-done >> SNPs_AA_allgenes.txt
+done >> ${pathout}/SNPs_AA_allgenes.txt
 echo "Mutations identified sucessfully."
 
 echo "All analyses finished sucessfully. Good luck with the results!"
