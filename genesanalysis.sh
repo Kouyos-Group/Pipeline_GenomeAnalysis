@@ -112,7 +112,6 @@ for genename in ${specific_genes}; do
   rm -f ${pathout}/SNPs_AA_${genename}.txt && \
     touch ${pathout}/SNPs_AA_${genename}.txt && \
     chmod +xwr ${pathout}/SNPs_AA_${genename}.txt
-  echo "hello"
   for strain_name in ${outputs_folder}/*; do
     # Reject folders containing GenomeContent or SNPs information
     if ! [[ ${strain_name} =~ .*GenomeContent.*|.*allSNPs.* ]]; then
