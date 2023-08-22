@@ -212,6 +212,20 @@ done
 echo "Gene annotations finished sucessfully."
 
 
+##################################
+## Compute Spa Type calculation ##
+##################################
+
+printf "\nCalculating spa type of all your sequences...\n"
+i=1
+for fnames in ${fastafolder}/*; do
+  # Compute spa type
+  spaTyper -f ${fnames} --output ${outn}_${i}/spatype.txt
+  i=$((i+1))
+done
+echo "Spa typing finished sucessfully."
+
+
 #####################################
 ## Copy results to temporal folder ##
 #####################################
