@@ -172,7 +172,8 @@ for j in ${positions_aa}; do
       # Find amino acid
       if [[ ${gname} != "" ]]; then
         seqaa=$(cat ${strain_name}/annotation/prokka.faa | \
-          grep -s -A100000 ${gname} | tail -n +2 | tr -d '\n' | cut -c ${j})
+          grep -s -A100000 ${gname} | tail -n +2 | \
+          grep -m1 -B100000 ">" | sed '$d' | tr -d '\n' | cut -c ${j})
         printf "${seqaa}\t";
       fi
     fi
